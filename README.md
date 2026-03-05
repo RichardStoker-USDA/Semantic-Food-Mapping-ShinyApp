@@ -1,5 +1,5 @@
 ---
-title: FoodMapper
+title: Semantic FoodMapper
 emoji: 🖇️
 colorFrom: green
 colorTo: blue
