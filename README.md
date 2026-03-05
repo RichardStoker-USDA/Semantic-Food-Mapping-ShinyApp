@@ -21,180 +21,115 @@ tags:
 license: cc0-1.0
 ---
 
-# FoodMapper
+# Semantic Food Mapping ShinyApp
 
-A neural embedding-based tool for matching food descriptions across nutritional databases.
+A web-based tool for matching food descriptions across nutritional databases using neural embeddings. This is the lightweight web version of FoodMapper, built with Shiny for Python.
 
 [![License: CC0](https://img.shields.io/badge/License-CC0-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Shiny for Python](https://img.shields.io/badge/Shiny-for%20Python-blue)](https://shiny.posit.co/py/)
 
-## Overview
+## Looking for the Full App?
 
-FoodMapper is a research application developed at the USDA Agricultural Research Service that solves the problem of matching food items between databases that use different naming conventions. The tool uses semantic embeddings to understand the meaning behind food descriptions, enabling accurate matches even when exact text differs.
+The full-featured **FoodMapper** desktop application for macOS is available at **[foodmapper.app](https://foodmapper.app)**. It includes match review workflows, local MLX-powered processing, and a native macOS interface. If you need more than just embedding and matching, that's where to go.
 
-### **[Click Here to Try FoodMapper](https://huggingface.co/spaces/richtext/semantic-food-mapper)**
+## What This Web Version Does
 
-No installation required - the application is hosted and ready to use on Hugging Face Spaces.
+This app handles the core embedding and semantic matching pipeline: upload two CSV files, pick your text columns, and the tool matches items across databases using GTE-Large embeddings and cosine similarity. It won't do match review or editing like the desktop app, but it's useful for quick matching jobs and exploratory work.
+
+### [Try it online on HuggingFace Spaces](https://huggingface.co/spaces/richtext/semantic-food-mapper)
+
+No installation needed. The hosted version is ready to go.
 
 ## Research Context
 
-This application was developed as part of research on automated dietary data mapping methods. The tool demonstrates the practical application of neural embedding models for food database harmonization.
+Developed at the USDA Agricultural Research Service as part of research on automated dietary data mapping.
 
-**Research Paper**: [Title Placeholder - Publication Pending]  
+**Research Paper**: [Title Placeholder - Publication Pending]
 **Authors**: Lemay DG, Strohmeier MP, Stoker RB, Larke JA, Wilson SMG
 
 ## Features
 
-- **Semantic Matching**: Uses GTE-Large neural embeddings to match based on meaning
-- **Batch Processing**: Handle thousands of items efficiently  
-- **Interactive Visualizations**: 7 chart types for exploring match distributions
-- **Text Cleaning**: Optional preprocessing with live preview
-- **Data Export**: Download results as CSV with all original data preserved
-- **API with CPU Fallback**: Uses API for fast processing, falls back to CPU if unavailable
+- Semantic matching with GTE-Large neural embeddings
+- Batch processing for thousands of items
+- 7 interactive chart types for exploring match distributions
+- Optional text cleaning with live preview
+- CSV export with all original data preserved
+- API processing with automatic CPU fallback
 
-## Performance
-
-- Processes thousands of items per minute via API
-- Automatic fallback to CPU processing if API unavailable (slower but functional)
-- CPU mode suitable for smaller datasets or testing
-- Concurrent batch processing for optimal throughput
-
-## Installation
+## Running Locally
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.8+
 - 2GB RAM minimum (4GB recommended for CPU mode)
 
-### Local Setup (GPU-Accelerated)
+### Setup
 
-For local deployment, the application runs entirely on your hardware using the Hugging Face transformers library.
-
-1. Clone the repository:
+1. Clone and install:
 ```bash
-git clone https://github.com/RichardStoker-USDA/Food-Mapper.git
-cd Food-Mapper
-```
-
-2. Install dependencies:
-```bash
+git clone https://github.com/RichardStoker-USDA/Semantic-Food-Mapping-ShinyApp.git
+cd Semantic-Food-Mapping-ShinyApp
 pip install -r requirements.txt
 ```
 
-3. Install PyTorch for your platform:
+2. Install PyTorch for your platform:
 
-**For Mac (Apple Silicon with Metal Performance Shaders):**
+**Mac (Apple Silicon):**
 ```bash
 pip install torch torchvision torchaudio
 ```
 
-**For NVIDIA GPU (CUDA):**
+**NVIDIA GPU (CUDA):**
 ```bash
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-**For CPU only:**
+**CPU only:**
 ```bash
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 ```
 
-4. Configure for local processing:
+3. Run:
 ```bash
 export MODEL_FALLBACK_MODE="local"  # Force local GPU/CPU usage
-```
-
-5. Run the application:
-```bash
 shiny run app.py --port 8000
 ```
 
-6. Open your browser to `http://localhost:8000`
+4. Open `http://localhost:8000`
 
-**Performance Notes:**
-- Apple Silicon Macs: Uses Metal Performance Shaders (MPS) for GPU acceleration
-- NVIDIA GPUs: Uses CUDA for fastest processing
-- CPU: Works on any system but slower for large datasets
-- Cloud deployments with minimal CPU: Consider using the hosted version on HuggingFace Spaces
+### Processing Modes
+
+**HuggingFace Spaces**: Uses API for fast processing with CPU fallback. No setup.
+
+**Local GPU**: With `MODEL_FALLBACK_MODE="local"`, the app uses Metal (Apple Silicon), CUDA (NVIDIA), or CPU as fallback.
 
 ## Usage
 
-### Quick Start
+1. Upload two CSV files (input items and target database)
+2. Select the text columns to match on
+3. Set your similarity threshold (default: 0.85)
+4. Run matching and review results
+5. Download matched results as CSV
 
-1. **Upload Data**: Two CSV files required
-   - Input CSV: Items to match
-   - Target CSV: Reference database
-
-2. **Configure**: Select text columns from each file
-
-3. **Set Threshold**: Adjust similarity threshold (default: 0.85)
-
-4. **Run Matching**: Process and view results
-
-5. **Export**: Download matched results as CSV
-
-### Data Requirements
-
-- CSV format with headers
-- Text columns for matching
-- UTF-8 encoding recommended
-
-### Sample Data
-
-No data of your own? Click "Or use sample data" in the sidebar to test the application with pre-loaded food datasets.
+Sample data is included if you want to test without your own files.
 
 ## Technical Details
-
-### Architecture
 
 - **Framework**: Shiny for Python
 - **Embedding Model**: [thenlper/gte-large](https://huggingface.co/thenlper/gte-large)
 - **Visualizations**: Plotly
 - **Data Processing**: Pandas, NumPy
 
-### Processing Pipeline
-
-1. Load and validate CSV files
-2. Apply optional text cleaning
-3. Generate embeddings via API or CPU
-4. Calculate cosine similarity scores
-5. Apply threshold for match/no-match classification
-6. Present results with interactive visualizations
-
-### Processing Modes
-
-**HuggingFace Spaces (Recommended):** Uses API for fast processing with automatic CPU fallback. No setup required.
-
-**Local GPU Mode:** When running locally with `MODEL_FALLBACK_MODE="local"`, the application uses:
-- Metal Performance Shaders (MPS) on Apple Silicon Macs
-- CUDA on NVIDIA GPUs  
-- CPU as fallback
-
-This allows processing thousands of items using your local GPU, often faster than API for large batches.
-
-**API Configuration:** To use a different embedding API (e.g., OpenAI):
-1. Update the model name in `app.py` (line with `DEEPINFRA_MODEL`)
-2. Set your API key as environment variable
-3. The app uses OpenAI-compatible endpoints, so most APIs work with minimal changes
-
 ## Deployment
 
-### Hugging Face Spaces (Primary Method)
-
-The application is hosted on Hugging Face Spaces for immediate use without installation. This is the recommended method as it requires no setup and includes API access for fast processing.
-
-### GitHub Actions
-
-The repository includes automated deployment workflow:
-- Push changes to GitHub
-- Action automatically updates Hugging Face Space
-- Space rebuilds and relaunches with new changes
+The app is hosted on HuggingFace Spaces with automated deployment via GitHub Actions. Push to GitHub and the Space rebuilds automatically.
 
 ## Development Team
 
-**Principal Investigator**: Dr. Danielle G. Lemay  
-**Developer**: Richard Stoker  
-**Organization**: USDA Agricultural Research Service  
+**Principal Investigator**: Dr. Danielle G. Lemay
+**Developer**: Richard Stoker
+**Organization**: USDA Agricultural Research Service
 **Location**: Western Human Nutrition Research Center, Davis, CA
 
 ## Citation
@@ -211,9 +146,9 @@ Internationally, this work is released under [CC0 1.0 Universal](https://creativ
 
 ## Contact
 
-Richard Stoker  
-IT Specialist (Scientific)  
-richard.stoker@usda.gov  
+Richard Stoker
+IT Specialist (Scientific)
+richard.stoker@usda.gov
 USDA ARS Western Human Nutrition Research Center
 
 ## Acknowledgments

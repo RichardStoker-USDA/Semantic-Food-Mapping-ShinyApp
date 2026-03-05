@@ -2686,7 +2686,7 @@ app_ui = ui.page_navbar(
                                     ui.strong("Contact:"),
                                     " richard.stoker@usda.gov",
                                     ui.br(),
-                                    ui.HTML('<a href="https://github.com/RichardStoker-USDA/Food-Mapper" target="_blank" class="text-decoration-none"><i class="bi bi-github me-1"></i>GitHub</a>'),
+                                    ui.HTML('<a href="https://github.com/RichardStoker-USDA/Semantic-Food-Mapping-ShinyApp" target="_blank" class="text-decoration-none"><i class="bi bi-github me-1"></i>GitHub</a>'),
                                     class_="text-muted small mb-0 text-end"
                                 )
                             )
@@ -2820,7 +2820,7 @@ def server(input: Inputs, output: Outputs, session: Session):
                                         class_="mb-2"
                                     ),
                                     ui.p(
-                                        ui.HTML('<a href="https://github.com/RichardStoker-USDA/Food-Mapper" target="_blank" class="text-decoration-none text-muted"><i class="bi bi-github"></i> View on GitHub</a>'),
+                                        ui.HTML('<a href="https://github.com/RichardStoker-USDA/Semantic-Food-Mapping-ShinyApp" target="_blank" class="text-decoration-none text-muted"><i class="bi bi-github"></i> View on GitHub</a>'),
                                         class_="mb-3 small"
                                     ),
                                     class_="ms-3 border-start ps-3"
