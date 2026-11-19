@@ -21,136 +21,42 @@ tags:
 license: cc0-1.0
 ---
 
-# Semantic Food Mapping ShinyApp
+# Semantic FoodMapper
 
-A web-based tool for matching food descriptions across nutritional databases using neural embeddings. This is the lightweight web version of FoodMapper, built with Shiny for Python.
+This Shiny for Python app matches food descriptions across two CSV files. It embeds descriptions with GTE-Large
+and uses cosine similarity to pick the best reference description for each input.
 
-[![License: CC0](https://img.shields.io/badge/License-CC0-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Shiny for Python](https://img.shields.io/badge/Shiny-for%20Python-blue)](https://shiny.posit.co/py/)
+## Run with Docker
 
-## Looking for the Full App?
+The Dockerfile uses Python 3.12. Build and start the app from this repository.
 
-The full-featured **FoodMapper** desktop application for macOS is available at **[foodmapper.app](https://foodmapper.app)**. It includes match review workflows, local MLX-powered processing, and a native macOS interface. If you need more than just embedding and matching, that's where to go.
-
-## What This Web Version Does
-
-This app handles the core embedding and semantic matching pipeline: upload two CSV files, pick your text columns, and the tool matches items across databases using GTE-Large embeddings and cosine similarity. It won't do match review or editing like the desktop app, but it's useful for quick matching jobs and exploratory work.
-
-### [Try it online on HuggingFace Spaces](https://huggingface.co/spaces/richtext/semantic-food-mapper)
-
-No installation needed. The hosted version is ready to go.
-
-## Research Context
-
-Developed at the USDA Agricultural Research Service as part of research on automated dietary data mapping.
-
-**Research Paper**: [Title Placeholder - Publication Pending]
-**Authors**: Lemay DG, Strohmeier MP, Stoker RB, Larke JA, Wilson SMG
-
-## Features
-
-- Semantic matching with GTE-Large neural embeddings
-- Batch processing for thousands of items
-- 7 interactive chart types for exploring match distributions
-- Optional text cleaning with live preview
-- CSV export with all original data preserved
-- API processing with automatic CPU fallback
-
-## Running Locally
-
-### Prerequisites
-
-- Python 3.8+
-- 2GB RAM minimum (4GB recommended for CPU mode)
-
-### Setup
-
-1. Clone and install:
-```bash
-git clone https://github.com/RichardStoker-USDA/Semantic-Food-Mapping-ShinyApp.git
-cd Semantic-Food-Mapping-ShinyApp
-pip install -r requirements.txt
+```sh
+docker build -t semantic-food-mapper .
+docker run --rm -p 127.0.0.1:7860:7860   -e MODEL_FALLBACK_MODE=local -e DEEPINFRA_API_KEY=unused semantic-food-mapper
 ```
 
-2. Install PyTorch for your platform:
+Open http://127.0.0.1:7860. With the default asynchronous path, `MODEL_FALLBACK_MODE=local` runs the
+Sentence Transformers model in the app and can download weights on first use. The current UI still checks for a
+nonempty key before running, so the local example supplies a placeholder. Leave `EMBEDDING_ASYNC` at its default
+for this mode.
 
-**Mac (Apple Silicon):**
-```bash
-pip install torch torchvision torchaudio
-```
+To use DeepInfra, set `DEEPINFRA_API_KEY` in the host environment and pass it with `-e DEEPINFRA_API_KEY`.
+The default `MODEL_FALLBACK_MODE=auto` sends the selected descriptions to DeepInfra for embeddings and uses
+the local model if the API fails.
 
-**NVIDIA GPU (CUDA):**
-```bash
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-```
+## Match two files
 
-**CPU only:**
-```bash
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-```
+1. Upload an input CSV and a reference CSV with headers, or load the built-in sample.
+2. Select the description column in each file. Preview optional text cleaning.
+3. Run matching. The default threshold is 0.85. Inspect the suggested reference, score, and match status.
+4. Export all results or the matched rows. When input cleaning is enabled, the all-results CSV uses the cleaned
+   input text in the selected column.
 
-3. Run:
-```bash
-export MODEL_FALLBACK_MODE="local"  # Force local GPU/CPU usage
-shiny run app.py --port 8000
-```
-
-4. Open `http://localhost:8000`
-
-### Processing Modes
-
-**HuggingFace Spaces**: Uses API for fast processing with CPU fallback. No setup.
-
-**Local GPU**: With `MODEL_FALLBACK_MODE="local"`, the app uses Metal (Apple Silicon), CUDA (NVIDIA), or CPU as fallback.
-
-## Usage
-
-1. Upload two CSV files (input items and target database)
-2. Select the text columns to match on
-3. Set your similarity threshold (default: 0.85)
-4. Run matching and review results
-5. Download matched results as CSV
-
-Sample data is included if you want to test without your own files.
-
-## Technical Details
-
-- **Framework**: Shiny for Python
-- **Embedding Model**: [thenlper/gte-large](https://huggingface.co/thenlper/gte-large)
-- **Visualizations**: Plotly
-- **Data Processing**: Pandas, NumPy
-
-## Deployment
-
-The app is hosted on HuggingFace Spaces with automated deployment via GitHub Actions. Push to GitHub and the Space rebuilds automatically.
-
-## Development Team
-
-**Principal Investigator**: Dr. Danielle G. Lemay
-**Developer**: Richard Stoker
-**Organization**: USDA Agricultural Research Service
-**Location**: Western Human Nutrition Research Center, Davis, CA
-
-## Citation
-
-If you use FoodMapper in your research, please cite:
-
-[Citation placeholder - to be updated upon publication]
+Use the result charts to examine score distributions and match counts. This repository contains the web app.
+The separate [FoodMapper desktop app](https://foodmapper.app) has a native macOS interface and additional review tools.
 
 ## License
 
-This work is in the public domain in the United States because it is a work prepared by an officer or employee of the United States Government as part of that person's official duties. See [17 U.S.C. 105](https://www.copyright.gov/title17/92chap1.html#105).
+[CC0 1.0](LICENSE).
 
-Internationally, this work is released under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
-
-## Contact
-
-Richard Stoker
-IT Specialist (Scientific)
-richard.stoker@usda.gov
-USDA ARS Western Human Nutrition Research Center
-
-## Acknowledgments
-
-This research was supported by USDA ARS project funding. The application uses the GTE-Large model developed by Alibaba DAMO Academy.
+Developed at the USDA Agricultural Research Service, Western Human Nutrition Research Center, Davis, California.
